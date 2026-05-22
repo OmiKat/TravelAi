@@ -33,7 +33,7 @@ public class DestinationService {
         return repository.findAll()
                 .stream()
                 .map(this::toResponse)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public DestinationResponse getById(UUID id){
@@ -46,7 +46,7 @@ public class DestinationService {
         return repository.findByNameContainingIgnoreCase(name)
                 .stream()
                 .map(this::toResponse)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     //mapper function
