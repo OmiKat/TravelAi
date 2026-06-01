@@ -27,7 +27,7 @@ public class DestinationController {
 
     @GetMapping()
     public ResponseEntity<List<DestinationResponse>> getAll(){
-        return ResponseEntity.ok(service.getAll());
+        return new ResponseEntity<>(service.getAll() , HttpStatus.OK);
     }
 
 
