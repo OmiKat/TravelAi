@@ -1,4 +1,4 @@
-package com.example.Travel.user;
+package com.example.Travel.user.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,7 +16,7 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll()  
+                        .anyRequest().permitAll()
                 );
         return http.build();
     }
