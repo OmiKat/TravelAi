@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -30,6 +31,16 @@ public class DestinationController {
         return new ResponseEntity<>(service.getAll() , HttpStatus.OK);
     }
 
+    @GetMapping({"/{id}"})
+    public ResponseEntity<DestinationResponse> getById(@PathVariable UUID id){
+        DestinationResponse response = service.getById(id);
+        return new ResponseEntity<>( response, HttpStatus.OK);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<DestinationResponse>> searchByName(@RequestParam String name){
+        return new ResponseEntity<>(service.getByName(name) , HttpStatus.OK);
+    }
 
 
 }
