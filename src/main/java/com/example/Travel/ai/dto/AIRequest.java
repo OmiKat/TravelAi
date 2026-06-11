@@ -26,4 +26,8 @@ public class AIRequest {
 
     private List<String> interests;
 
+    public String toCacheKey() {
+        return destination + "-" + durationDays + "-" + budget + "-" + interests;
+    }
+
 }

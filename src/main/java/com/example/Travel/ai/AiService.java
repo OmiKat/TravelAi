@@ -6,11 +6,14 @@ import com.example.Travel.ai.dto.GroqRequest;
 import com.example.Travel.ai.dto.GroqResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import tools.jackson.databind.ObjectMapper;
 
+import java.time.Duration;
 import java.util.List;
 
 @Service
@@ -18,6 +21,8 @@ import java.util.List;
 public class AiService {
 
     private final PromptBuilder promptBuilder;
+    private final RedisTemplate<String,Object> redisTemplate;
+    private final ObjectMapper mapper;
 
     @Value("${groq.api.url}")
     private String groqApiUrl;
@@ -28,9 +33,20 @@ public class AiService {
     @Value("${groq.model}")
     private String groqModel;
 
+    @Value("${ai.cache.ttl}")
+    private long cacheTtl;
+
     private final WebClient webClient = WebClient.builder().build();
 
     public AIResponse generateItinerary(AIRequest aiRequest){
+
+        String cacheKey = "itinerary:" + aiRequest.toCacheKey();
+
+        Object cached = redisTemplate.opsForValue().get(cacheKey);
+        if (cached != null) {
+            return mapper.convertValue(cached, AIResponse.class);
+        }
+
         GroqRequest groqRequest = GroqRequest.builder()
                 .model(groqModel)
                 .messages(List.of(
@@ -64,7 +80,7 @@ public class AiService {
         assert groqResponse != null;
         String itinerary = groqResponse.getGeneratedText();
 
-        ObjectMapper mapper = new ObjectMapper();
+//        ObjectMapper mapper = new ObjectMapper();
 
 
         AIResponse.Itinerary itineraryObj =
@@ -74,12 +90,20 @@ public class AiService {
                 );
 
 
-        return AIResponse.builder()
+        AIResponse response = AIResponse.builder()
                 .destination(aiRequest.getDestination())
                 .budget(aiRequest.getBudget())
                 .durationDays(aiRequest.getDurationDays())
                 .itinerary(itineraryObj)
                 .build();
+
+        redisTemplate.opsForValue().set(
+                cacheKey,
+                response,
+                Duration.ofSeconds(cacheTtl)
+        );
+
+        return response;
     }
 
 
