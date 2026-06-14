@@ -3,6 +3,8 @@ package com.example.Travel.destination;
 import com.example.Travel.destination.dto.DestinationRequest;
 import com.example.Travel.destination.dto.DestinationResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,11 +31,9 @@ public class DestinationService {
         return toResponse(saved);
     }
 
-    public List<DestinationResponse> getAll(){
-        return repository.findAll()
-                .stream()
-                .map(this::toResponse)
-                .toList();
+    public Page<DestinationResponse> getAll(Pageable pageable){
+        return repository.findAll(pageable)
+                .map(this::toResponse);
     }
 
     public DestinationResponse getById(UUID id){
@@ -42,11 +42,9 @@ public class DestinationService {
         return toResponse(destination);
     }
 
-    public List<DestinationResponse> getByName(String name){
-        return repository.findByNameContainingIgnoreCase(name)
-                .stream()
-                .map(this::toResponse)
-                .toList();
+    public Page<DestinationResponse> getByName(String name , Pageable pageable){
+        return repository.findByNameContainingIgnoreCase(name , pageable)
+                .map(this::toResponse);
     }
 
     //mapper function

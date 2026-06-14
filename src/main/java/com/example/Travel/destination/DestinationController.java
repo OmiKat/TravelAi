@@ -4,6 +4,8 @@ import com.example.Travel.destination.dto.DestinationRequest;
 import com.example.Travel.destination.dto.DestinationResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,8 +29,8 @@ public class DestinationController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<DestinationResponse>> getAll(){
-        return new ResponseEntity<>(service.getAll() , HttpStatus.OK);
+    public ResponseEntity<Page<DestinationResponse>> getAll(Pageable pageable){
+        return new ResponseEntity<>(service.getAll(pageable) , HttpStatus.OK);
     }
 
     @GetMapping({"/{id}"})
@@ -38,8 +40,8 @@ public class DestinationController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<DestinationResponse>> searchByName(@RequestParam String name){
-        return new ResponseEntity<>(service.getByName(name) , HttpStatus.OK);
+    public ResponseEntity<Page<DestinationResponse>> searchByName(@RequestParam String name , Pageable pageable){
+        return new ResponseEntity<>(service.getByName(name , pageable) , HttpStatus.OK);
     }
 
 

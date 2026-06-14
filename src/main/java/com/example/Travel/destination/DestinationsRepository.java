@@ -1,5 +1,7 @@
 package com.example.Travel.destination;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -9,6 +11,6 @@ import java.util.UUID;
 @Repository
 public interface DestinationsRepository extends JpaRepository<DestinationEntity , UUID> {
     List<DestinationEntity> findByCountry(String country);
-    List<DestinationEntity> findByNameContainingIgnoreCase(String name);
+    Page<DestinationEntity> findByNameContainingIgnoreCase(String name , Pageable pageable);
 
 }
